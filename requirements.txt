@@ -12,7 +12,7 @@ heroku3
 pynewtonmath
 pytz
 aiohttp
-pip install python-telegram-bot
-pip install python-dotenv
-pip install "python-telegram-bot[ext]"
-pip install "python-telegram-bot[all]"
+python-telegram-bot
+python-dotenv
+"python-telegram-bot[ext]"
+"python-telegram-bot[all]"
