@@ -14,5 +14,4 @@ pytz
 aiohttp
 python-telegram-bot
 python-dotenv
-"python-telegram-bot[ext]"
-"python-telegram-bot[all]"
+
