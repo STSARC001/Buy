@@ -1,1 +1,1 @@
-web: gunicorn -w 4 -b 0.0.0.0:4000 Buy:app
+web: python3 Buy.py
