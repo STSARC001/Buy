@@ -2,6 +2,7 @@ import os
 from flask import Flask, request
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+import threading
 
 # Replace 'YOUR_TELEGRAM_TOKEN' with your actual bot token
 TOKEN = '7323141793:AAHbGgPfOEmmLUnMe-7I9X5MPjuhqiAfxYQ'
@@ -64,7 +65,7 @@ async def payment_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif query.data == 'upi':
         await query.message.reply_text(text="Our UPI ID: 9370162316@paytm")
 
-def main() -> None:
+def run_bot():
     application = Application.builder().token(TOKEN).build()
 
     application.add_handler(CommandHandler('start', start))
@@ -74,10 +75,9 @@ def main() -> None:
     application.run_polling()
 
 if __name__ == '__main__':
-    # Start the Telegram bot
-    import threading
-    threading.Thread(target=main).start()
-    
+    # Start the Telegram bot in a separate thread
+    threading.Thread(target=run_bot).start()
+
     # Start the Flask server
-    port = int(os.environ.get('PORT', 4000))  # Use PORT env variable or default to 5000
+    port = int(os.environ.get('PORT', 4000))  # Use PORT env variable or default to 4000
     app.run(host='0.0.0.0', port=port)
