@@ -1,6 +1,5 @@
 import os
 import logging
-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
@@ -67,9 +66,8 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(payment_option, pattern='^(credit_card|paypal|crypto|bank_transfer)$'))
     application.add_handler(CallbackQueryHandler(payment_detail, pattern='^(qr|upi)$'))
 
-    application.run_polling()
-    port = int(os.environ.get('PORT', 4000))
-    
+    port = int(os.environ.get('PORT', 4000))  # Default to 8443 if PORT is not set
+    application.run_polling(allowed_updates=Update.ALL_TYPES, listen='0.0.0.0', port=port)
 
 if __name__ == '__main__':
     main()
