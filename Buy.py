@@ -1,8 +1,16 @@
 import os
-from flask import Flask, request
+import logging
+import requests
+from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-import threading
+
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 # Replace 'YOUR_TELEGRAM_TOKEN' with your actual bot token
 TOKEN = '7323141793:AAHbGgPfOEmmLUnMe-7I9X5MPjuhqiAfxYQ'
@@ -13,7 +21,20 @@ app = Flask(__name__)
 def index():
     return 'Bot is running!'
 
+@app.route('/check_connectivity')
+def check_connectivity():
+    try:
+        response = requests.get('https://api.telegram.org')
+        if response.status_code == 200:
+            return 'Connectivity to Telegram API is OK!'
+        else:
+            return 'Failed to connect to Telegram API', 500
+    except Exception as e:
+        logger.error(f"Error checking connectivity: {e}")
+        return f"Error checking connectivity: {e}", 500
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    logger.info(f"Received /start command from {update.effective_user.id}")
     message = ("Hello sir 🌟\n\n"
                "Welcome to the Stake Payment Gateway! 🎧\n\n"
                "💎 Get your Premium Bot 🤖 License Key 🔒\n"
@@ -41,6 +62,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def payment_option(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
+    logger.info(f"User selected payment option: {query.data}")
 
     # Based on the user's choice, show the next set of buttons
     keyboard = [
@@ -57,6 +79,7 @@ async def payment_option(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 async def payment_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
+    logger.info(f"User selected payment detail: {query.data}")
 
     if query.data == 'qr':
         qr_image_path = 'qr.jpg'  # Replace with the actual path to your QR code image
@@ -72,12 +95,13 @@ def run_bot():
     application.add_handler(CallbackQueryHandler(payment_option, pattern='^(credit_card|paypal|crypto|bank_transfer)$'))
     application.add_handler(CallbackQueryHandler(payment_detail, pattern='^(qr|upi)$'))
 
+    logger.info("Starting bot")
     application.run_polling()
 
 if __name__ == '__main__':
-    # Start the Telegram bot in a separate thread
+    import threading
     threading.Thread(target=run_bot).start()
 
-    # Start the Flask server
     port = int(os.environ.get('PORT', 4000))  # Use PORT env variable or default to 4000
+    logger.info(f"Starting Flask server on port {port}")
     app.run(host='0.0.0.0', port=port)
