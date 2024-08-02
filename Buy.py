@@ -99,7 +99,7 @@ async def payment_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                                         reply_markup=reply_markup)
     elif query.data == 'upi':
         reply_markup = InlineKeyboardMarkup([[REDIRECT_BUTTON]])
-        await query.message.reply_text(text=f"Our UPI ID: 9370162316@ptsbi\n\n{PAYMENT_CONFIRMATION_MESSAGE}",
+        await query.message.reply_text(text=f"Our UPI ID: coderd60@okicici\n\n{PAYMENT_CONFIRMATION_MESSAGE}",
                                        reply_markup=reply_markup)
 
 def main() -> None:
